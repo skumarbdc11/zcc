@@ -1,5 +1,5 @@
 # Lightweight C Compiler
-The objective for this project is to develop a lightweight C Compiler with limited C Constructs support and provide a implementation for lexer, syntax directed translor (SDT), code generated for generic instruction set architecture using simple register coloring algorithm. It has smaller footprint implementation for all of these components which can be used for learning pupose.
+The objective for this project is to develop a lightweight C Compiler with limited C Constructs support and provide a implementation for lexer, syntax directed translator (SDT), code generated for generic instruction set architecture using simple register coloring algorithm. It has smaller footprint implementation for all of these components which can be used for learning pupose.
 
 # Dependencies
 1. flex
