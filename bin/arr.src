@@ -1,0 +1,52 @@
+
+	DEFINE arr_TEXT, space=EROM
+
+	SEGMENT FAR_DATA
+_ca:
+	DB "Hi"
+	DB 0
+	SEGMENT FAR_DATA
+_sa:
+	DW 1
+	DW 2
+	DW 3
+	DW 4
+	SEGMENT FAR_DATA
+_ia:
+	DL 5
+	DL 6
+	DL 7
+	DL 8
+	DL 9
+	DL 10
+	SEGMENT FAR_DATA
+_la:
+	DL 11
+	DL 12
+	DL 13
+
+	SEGMENT arr_TEXT
+	
+_test:
+	LINK		 #0h
+	PUSHM		 #e000h
+		
+;	la[2] = ia[1];
+	LEA		 R0, _la
+	
+	LEA		 R1, _ia
+	LD		 R2, 4(R1)
+	LD		 8(R0), R2
+	POPM		 #e000h
+	UNLINK		
+	RET		
+
+
+;************************* _test *************************
+;Name                   Address       Size
+
+	XDEF _test
+	XDEF _la
+	XDEF _ia
+	XDEF _sa
+	XDEF _ca

@@ -1,0 +1,160 @@
+
+	DEFINE test_TEXT, space=EROM
+
+	SEGMENT FAR_DATA
+_g1:
+	DB 25
+	SEGMENT FAR_BSS
+_g2:
+	DS 2
+	SEGMENT FAR_BSS
+_g3:
+	DS 4
+	SEGMENT FAR_BSS
+_g4:
+	DS 4
+	SEGMENT FAR_DATA
+_buff:
+	DB 1
+	DB 2
+	DB 3
+	DB 4
+	DB 0
+	DB 0
+	DB 0
+	DB 0
+	DB 0
+	DB 0
+
+	SEGMENT test_TEXT
+	
+_test:
+	LINK		 #7h
+	PUSHM		 #c000h
+	
+;	g1 = p1+l3-l1;
+	LD.sb	 R0, 8(FP)
+	ADD		 R0, -3(FP)
+	SUB.sb	 R0, 0(FP)
+	LD.b	 _g1, R0
+		
+;
+;	g3 = p3 % (++l3);
+	LD		 R0, -3(FP)
+	INC		 R0
+	LD		 -3(FP), R0
+	LD		 R1, 11(FP)
+	SDIV		 R1, R0
+	LD		 _g3, R0
+		
+;
+;	if(g3<=TEN)
+	LD		 R0, _g3
+	CP		 R0, #ah
+	LD		le,  R0
+	CPZ		 R0
+	JP		eq,  __L1
+		
+;	{
+;		l2 = g2 * (p2--);
+	LD.sw	 R0, 9(FP)
+	LD.sw	 R1, 9(FP)
+	DEC		 R1
+	LD.w	 9(FP), R1
+	LD.sw	 R1, _g2
+	SMUL		 R1, R0
+	LD.w	 -1(FP), R1
+	JP		 __L2
+	
+__L1:
+			
+;	}
+;	else
+;	{
+;		if(g3>=TWENTY)
+	LD		 R0, _g3
+	CP		 R0, #14h
+	LD		ge,  R0
+	CPZ		 R0
+	JP		eq,  __L0
+	
+;		{
+;			l2 = g2 + p2;
+	LD.sw	 R0, _g2
+	ADD.sw	 R0, 9(FP)
+	LD.w	 -1(FP), R0
+	
+__L0:
+	
+__L2:
+	POPM		 #c000h
+	UNLINK		
+	RET		
+
+
+;************************* _test *************************
+;Name                   Address       Size
+;p1                     FP+8          1  
+;p2                     FP+9          2  
+;p3                     FP+11         4  
+;l3                     FP-3          4  
+;l2                     FP-1          2  
+;l1                     FP-0          1  
+
+	SEGMENT test_TEXT
+	
+_test1:
+	LINK		 #0h
+	PUSHM		 #8000h
+	
+__L4:
+		
+;	while(g1>TEN)
+	LD.sb	 R0, _g1
+	CP		 R0, #ah
+	LD		gt,  R0
+	CPZ		 R0
+	JP		eq,  __L5
+	
+;	{
+;		g1++;
+	LD.sb	 R0, _g1
+	LD.sb	 R0, _g1
+	INC		 R0
+	LD.b	 _g1, R0
+	
+;
+;		g3 = g3+g4;
+	LD		 R0, _g3
+	ADD		 R0, _g4
+	LD		 _g3, R0
+			
+;		if(g3>TWENTY)
+	LD		 R0, _g3
+	CP		 R0, #14h
+	LD		gt,  R0
+	CPZ		 R0
+	JP		eq,  __L3
+	JP		 __L6
+	
+__L3:
+	JP		 __L4
+	
+__L5:
+	
+__L6:
+	POPM		 #8000h
+	UNLINK		
+	RET		
+
+
+;************************* _test1 *************************
+;Name                   Address       Size
+
+	XDEF _test1
+	XDEF _test
+	XDEF _buff
+	XDEF _g4
+	XDEF _g3
+	XDEF _g2
+	XDEF _g1

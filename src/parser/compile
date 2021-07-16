@@ -1,0 +1,2 @@
+flex -ozlex.c zlex.l
+yacc --yacc -ozparser.c -rall -d zyacc.y
